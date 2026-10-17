@@ -111,9 +111,9 @@
     if (map) return;
     if (typeof L === "undefined") { $("#map").innerHTML = '<p style="padding:24px">The map needs an internet connection to load.</p>'; map = { invalidateSize() {}, flyTo() {} }; return; }
     map = L.map("map", { scrollWheelZoom: false, zoomControl: true, worldCopyJump: false });
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-      maxZoom: 18, subdomains: "abcd",
-      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>'
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
     map.on("focus", () => map.scrollWheelZoom.enable());
     map.on("blur", () => map.scrollWheelZoom.disable());
