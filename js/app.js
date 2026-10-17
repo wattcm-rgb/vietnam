@@ -111,10 +111,19 @@
     if (map) return;
     if (typeof L === "undefined") { $("#map").innerHTML = '<p style="padding:24px">The map needs an internet connection to load.</p>'; map = { invalidateSize() {}, flyTo() {} }; return; }
     map = L.map("map", { scrollWheelZoom: false, zoomControl: true, worldCopyJump: false });
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    const osm = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 18,
       attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
+    // Backup basemap if OpenStreetMap tiles fail to load
+    let failed = 0, usedBackup = false;
+    osm.on("tileerror", () => {
+      if (++failed < 4 || usedBackup) return;
+      usedBackup = true; map.removeLayer(osm);
+      L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+        maxZoom: 18, attribution: "Tiles © Esri"
+      }).addTo(map);
+    });
     map.on("focus", () => map.scrollWheelZoom.enable());
     map.on("blur", () => map.scrollWheelZoom.disable());
 
